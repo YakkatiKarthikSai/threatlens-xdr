@@ -8,6 +8,8 @@ import {
 import { detectSuspiciousIP } from "../../lib/detectors/suspiciousIP";
 import { dashboardData } from "../../lib/detectors/dashboardData";
 import FileUpload from "../../components/FileUpload";
+import { detectPortScan } from "../../lib/detectors/portScan";
+import SeverityBadge from "../../components/SeverityBadge";
 
 export default function AnalyzerPage() {
   const [content, setContent] = useState("");
@@ -17,23 +19,28 @@ export default function AnalyzerPage() {
 
   const handleAnalyze = () => {
     const bruteForce = detectBruteForce(content);
+
     const suspiciousIP = detectSuspiciousIP(content);
+
+    const portScan = detectPortScan(content);
 
     dashboardData.scansPerformed += 1;
 
-    if (bruteForce.occurrences > 0) {
+    const results = [bruteForce, suspiciousIP, portScan];
+
+    const highestThreat = results.reduce((prev, current) =>
+      prev.occurrences > current.occurrences ? prev : current,
+    );
+
+    if (highestThreat.occurrences > 0) {
       dashboardData.totalAlerts += 1;
     }
 
-    if (bruteForce.severity === "HIGH") {
+    if (highestThreat.severity === "HIGH") {
       dashboardData.criticalAlerts += 1;
     }
 
-    if (bruteForce.occurrences >= suspiciousIP.occurrences) {
-      setResult(bruteForce);
-    } else {
-      setResult(suspiciousIP);
-    }
+    setResult(highestThreat);
   };
 
   return (
@@ -77,9 +84,10 @@ export default function AnalyzerPage() {
             <strong>Occurrences:</strong> {result.occurrences}
           </p>
 
-          <p>
-            <strong>Severity:</strong> {result.severity}
-          </p>
+          <div className="mt-2">
+            <strong>Severity:</strong>{" "}
+            <SeverityBadge severity={result.severity} />
+          </div>
         </div>
       )}
     </main>
