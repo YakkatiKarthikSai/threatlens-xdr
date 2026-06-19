@@ -6,11 +6,15 @@ import {
   DetectionResult,
 } from "../../lib/detectors/bruteForce";
 import { detectSuspiciousIP } from "../../lib/detectors/suspiciousIP";
-import { dashboardData } from "../../lib/detectors/dashboardData";
-import FileUpload from "../../components/FileUpload";
 import { detectPortScan } from "../../lib/detectors/portScan";
-import SeverityBadge from "../../components/SeverityBadge";
+import { dashboardData } from "../../lib/detectors/dashboardData";
 import { threatHistory } from "../../lib/detectors/threatHistory";
+import FileUpload from "../../components/FileUpload";
+import SeverityBadge from "../../components/SeverityBadge";
+import {
+  saveThreatHistory,
+  getThreatHistory,
+} from "../../lib/detectors/storage";
 
 export default function AnalyzerPage() {
   const [content, setContent] = useState("");
@@ -41,12 +45,18 @@ export default function AnalyzerPage() {
       dashboardData.criticalAlerts += 1;
     }
 
-    threatHistory.push({
+    const existingHistory = getThreatHistory();
+
+    existingHistory.push({
       type: highestThreat.alertType,
       severity: highestThreat.severity,
       occurrences: highestThreat.occurrences,
       timestamp: new Date().toLocaleString(),
     });
+
+    saveThreatHistory(existingHistory);
+
+    console.log(threatHistory);
 
     setResult(highestThreat);
   };

@@ -3,7 +3,7 @@ interface SeverityBadgeProps {
 }
 
 export default function SeverityBadge({ severity }: SeverityBadgeProps) {
-  const styles = {
+  const colors = {
     HIGH: "bg-red-600",
     MEDIUM: "bg-yellow-600",
     LOW: "bg-green-600",
@@ -12,7 +12,7 @@ export default function SeverityBadge({ severity }: SeverityBadgeProps) {
   return (
     <span
       className={`px-3 py-1 rounded text-white ${
-        styles[severity as keyof typeof styles] || "bg-gray-600"
+        colors[severity as keyof typeof colors] || "bg-gray-600"
       }`}
     >
       {severity}
