@@ -1,6 +1,7 @@
 import StatsCard from "../../components/StatsCard";
 import ThreatChart from "../../components/ThreatChart";
 import { dashboardData } from "../../lib/detectors/dashboardData";
+import { threatHistory } from "../../lib/detectors/threatHistory";
 
 export default function DashboardPage() {
   return (
@@ -39,28 +40,20 @@ export default function DashboardPage() {
             <tr>
               <th className="text-left pb-3">Alert</th>
               <th className="text-left pb-3">Severity</th>
-              <th className="text-left pb-3">Status</th>
+              <th className="text-left pb-3">Time</th>
             </tr>
           </thead>
 
           <tbody>
-            <tr>
-              <td>Brute Force Attack</td>
-              <td>HIGH</td>
-              <td>OPEN</td>
-            </tr>
+            {threatHistory.map((threat, index) => (
+              <tr key={index} className="border-t border-gray-700">
+                <td className="py-3">{threat.type}</td>
 
-            <tr>
-              <td>Suspicious IP Activity</td>
-              <td>HIGH</td>
-              <td>OPEN</td>
-            </tr>
+                <td className="py-3">{threat.severity}</td>
 
-            <tr>
-              <td>Port Scan</td>
-              <td>MEDIUM</td>
-              <td>INVESTIGATING</td>
-            </tr>
+                <td className="py-3">{threat.timestamp}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

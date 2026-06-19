@@ -10,6 +10,7 @@ import { dashboardData } from "../../lib/detectors/dashboardData";
 import FileUpload from "../../components/FileUpload";
 import { detectPortScan } from "../../lib/detectors/portScan";
 import SeverityBadge from "../../components/SeverityBadge";
+import { threatHistory } from "../../lib/detectors/threatHistory";
 
 export default function AnalyzerPage() {
   const [content, setContent] = useState("");
@@ -39,6 +40,13 @@ export default function AnalyzerPage() {
     if (highestThreat.severity === "HIGH") {
       dashboardData.criticalAlerts += 1;
     }
+
+    threatHistory.push({
+      type: highestThreat.alertType,
+      severity: highestThreat.severity,
+      occurrences: highestThreat.occurrences,
+      timestamp: new Date().toLocaleString(),
+    });
 
     setResult(highestThreat);
   };
